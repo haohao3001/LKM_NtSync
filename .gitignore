@@ -1,0 +1,12 @@
+deps/
+out/
+*.ko
+*.o
+*.mod
+*.mod.c
+*.cmd
+*.symversions
+Module.symvers
+modules.order
+.sdk/
+compile_commands.json

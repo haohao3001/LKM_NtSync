@@ -1,0 +1,3 @@
+Diagnostics:
+  Suppress:
+    - default-const-init-var-unsafe

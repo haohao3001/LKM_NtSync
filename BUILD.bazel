@@ -1,0 +1,38 @@
+# vendor/lkm_ntsync/BUILD.bazel
+load("//build/kernel/kleaf:kernel.bzl", "ddk_module","ddk_headers", "ddk_uapi_headers","kernel_compile_commands")
+
+# 声明 UAPI 头文件目标
+ddk_headers(
+    name = "kallrecon_headers",
+    hdrs = glob(["deps/KallRecon/lib/*.h"]),
+    includes = ["deps/KallRecon/lib"],
+)
+
+ddk_uapi_headers(
+    name = "uapi_headers",
+    srcs = ["include/uapi/linux/ntsync.h"],
+    out = "ntsync_uapi_headers.tar.gz",   # 输出文件名，必须以 .tar.gz 结尾
+    kernel_build = "//common:kernel_aarch64",  # 指定依赖的内核构建
+)
+
+ddk_module(
+    name = "lkm_ntsync",
+    srcs = glob([
+        "deps/KallRecon/lib/*.c",
+        "deps/KallRecon/lib/*.S",
+    ]) + [
+        "drivers/misc/ntsync.c",
+        "include/uapi/linux/ntsync.h",
+    ],
+    out = "lkm_ntsync.ko",
+    kernel_build = "//common:kernel_aarch64",
+    deps = [
+        "//common:all_headers",
+        ":kallrecon_headers"
+    ]
+)
+
+kernel_compile_commands(
+    name = "lkm_ntsync_compdb",
+    deps = [":lkm_ntsync"],
+)
